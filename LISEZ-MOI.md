@@ -47,3 +47,65 @@ Vérifications:
 - s'assurer que les principaux outils utilisés lors de la formation sont compatibles avec ce template
 - deploiements ? Compatible avec Netlify/Vercel/Heroku ?
 - fonctionnement avec yarn/pnpm
+
+# Migration to TS
+
+## Typescript part
+
+1. cd frontend
+2. npm i --save-dev typescript
+3. tsc --init
+4. Add in tsconfig.json
+  1. "baseUrl": ".",
+    "paths": {
+      "@assets/*": ["src/assets/*"],
+      "@components/*": ["src/components/*"],
+      "@pages/*": ["src/pages/*"],
+      "@services/*": ["src/services/*"]
+    }
+5. npm i @types/react --save-dev
+6. uncomment " "jsx": "preserve", " line in tsconfig.json
+7. In tsconfig.json: Under the object compilerOptions, add:
+"include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.jsx",
+    "src/**/*.vue",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "./*.d.ts"
+    ],
+8. Create a reacDom.d.ts for reactdom types and add in the file : declare module 'react-dom/client';
+9. Under in frontend folder: create a svg.d.ts declaration file so ts undertant svg file
+  1. Add this in the file:
+  declare module "*.svg" {
+  import React = require("react");
+  export const ReactComponent: React.FC<React.SVGProps<SVGSVGElement>>;
+  const src: string;
+  export default src;
+}
+10. Change all .jsx files to .tsx files
+11. dans index.html: change main.jsx to main.tsx
+
+
+## ESlint typescript part
+
+1. Change all .jsx references to tsx in the scripts: lint and fix in package.json
+2. In eslintrc.json: Add the line under, in the rules object so Eslint is happy about jsx in tsx files: 
+  1. "react/jsx-filename-extension": [2, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
+3. In eslinttrc.json: In the object "eslint-import-resolver-custom-alias" there is an extensions array
+with ".js", ".jsx". 
+  1. Add ".ts", ".tsx"
+4. In the rules object: 
+  1. Add "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+
